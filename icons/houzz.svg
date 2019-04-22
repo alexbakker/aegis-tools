@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+	<title>Houzz icon</title>
+	<circle cx="12" cy="12" r="12" fill="#7AC142"></circle>
+	<path d="M18.93 12v8L12 24v-8.002L5.07 20V3.998L12 0v8l-6.928 4L12 15.998V8l6.93-4.002V12z" transform="translate(4.8, 4.8) scale(0.6)" fill="white"></path>
+</svg>

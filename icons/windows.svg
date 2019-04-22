@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+	<title>Windows icon</title>
+	<circle cx="12" cy="12" r="12" fill="#0078D6"></circle>
+	<path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" transform="translate(4.8, 4.8) scale(0.6)" fill="white"></path>
+</svg>

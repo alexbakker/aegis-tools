@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+	<title>Framer icon</title>
+	<circle cx="12" cy="12" r="12" fill="#0055FF"></circle>
+	<path d="M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z" transform="translate(4.8, 4.8) scale(0.6)" fill="white"></path>
+</svg>
