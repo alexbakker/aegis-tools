@@ -1,0 +1,2 @@
+recursive-include aegis/simple-icons/_data *
+recursive-include aegis/simple-icons/icons *

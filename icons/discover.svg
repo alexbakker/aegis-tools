@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-	<title>Discover icon</title>
-	<circle cx="12" cy="12" r="12" fill="#FF6000"></circle>
-	<path d="M12 0A12 12 0 1 0 12 24A12 12 0 1 0 12 0Z" transform="translate(4.8, 4.8) scale(0.6)" fill="white"></path>
-</svg>
