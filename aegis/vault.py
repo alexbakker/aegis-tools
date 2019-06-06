@@ -5,7 +5,7 @@ import secrets
 import sys
 import uuid
 from aegis.icons import IconGenerator
-from base64 import b32encode,b64encode
+from base64 import b32encode, b64encode
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
@@ -85,31 +85,38 @@ _names = [
     "Evelyn"
 ]
 
+def generate_entry(icon_gen=None):
+    # generate a random icon and render it to JPEG
+    if icon_gen is None:
+        icon_gen = IconGenerator()
+
+    icon = icon_gen.generate_random()
+    icon_s = b64encode(icon.render_png()).decode("utf-8")
+
+    # generate a random 128-bit secret
+    secret = b32encode(secrets.token_bytes(16)).decode("utf-8").rstrip("=")
+    entry = {
+        "type": "totp",
+        "uuid": str(uuid.uuid4()),
+        "name": secrets.choice(_names),
+        "issuer": icon.title,
+        "icon": icon_s,
+        "info": {
+            "secret": secret,
+            "algo": "SHA1",
+            "digits": 6,
+            "period": 30
+        }
+    }
+
+    return entry
+
 def generate_vault(entry_count=20):
     icon_gen = IconGenerator()
 
     entries = []
     for i in range(entry_count):
-        # generate a random icon and render it to JPEG
-        icon = icon_gen.generate_random()
-        icon_s = b64encode(icon.render_png()).decode("utf-8")
-
-        # generate a random 128-bit secret
-        secret = b32encode(secrets.token_bytes(16)).decode("utf-8")
-
-        entries.append({
-            "type": "totp",
-            "uuid": str(uuid.uuid4()),
-            "name": secrets.choice(_names),
-            "issuer": icon.title,
-            "icon": icon_s,
-            "info": {
-                "secret": secret,
-                "algo": "SHA1",
-                "digits": 6,
-                "period": 30
-            }
-        })
+        entries.append(generate_entry(icon_gen=icon_gen))
 
     return {
         "version": 1,

@@ -3,9 +3,12 @@ import getpass
 import io
 import json
 import os
+from collections import namedtuple
+from qrcode import QRCode
+from urllib.parse import urlencode, quote as urlquote
 
 from aegis.icons import IconGenerator
-from aegis.vault import decrypt_vault, generate_vault
+from aegis.vault import decrypt_vault, generate_vault, generate_entry
 
 def _write_output(output, data):
     if output != "-":
@@ -34,6 +37,22 @@ def _do_decrypt(args):
     db = decrypt_vault(data, password)
     _write_output(args.output, json.dumps(db, indent=4))
 
+def _do_qr(args):
+    entry = generate_entry()
+
+    params = {
+        "secret": entry["info"]["secret"],
+        "issuer": entry["issuer"],
+        "algorithm": entry["info"]["algo"],
+        "digits": entry["info"]["digits"],
+        "period": entry["info"]["period"]
+    }
+    uri = "otpauth://totp/{}:{}.com?".format(urlquote(entry["name"]), urlquote(entry["issuer"]))
+
+    qr = QRCode()
+    qr.add_data(uri + urlencode(params))
+    qr.print_ascii(invert=True)
+
 def main():
     parser = argparse.ArgumentParser(description="A collection of developer tools for Aegis Authenticator", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     subparsers = parser.add_subparsers()
@@ -46,6 +65,9 @@ def main():
     vault_parser.add_argument("--output", dest="output", default="-", help="vault output file ('-' for stdout)")
     vault_parser.add_argument("--entries", dest="entries", default=20, type=int, help="the amount of entries to generate")
     vault_parser.set_defaults(func=_do_vault)
+
+    qr_parser = subparsers.add_parser("gen-qr", help="Generate a random QR code")
+    qr_parser.set_defaults(func=_do_qr)
 
     decrypt_parser = subparsers.add_parser("decrypt-vault", help="Decrypt an Aegis vault")
     decrypt_parser.add_argument("--input", dest="input", required=True, help="encrypted Aegis vault file")

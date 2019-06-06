@@ -14,6 +14,7 @@ setup(
     install_requires=[
         "cairosvg",
         "cryptography",
+        "qrcode",
         "xmltodict"
     ],
     entry_points={

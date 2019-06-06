@@ -37,3 +37,9 @@ DIR=$(mktemp -d)
 aegis-tools gen-icons --output "${DIR}"
 echo $DIR
 ```
+
+There's also a QR code generator.
+
+```sh
+aegis-tools gen-qr
+```
