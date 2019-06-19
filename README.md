@@ -8,8 +8,7 @@ This package is not available on PyPi, so you need to clone the repository and
 install it manually.
 
 ```sh
-git clone --recursive-submodules https://github.com/alexbakker/aegis-tools
-cd aegis-tools && pip install --user .
+pip install --user git+https://github.com/alexbakker/aegis-tools.git@master
 ```
 
 ## Usage
