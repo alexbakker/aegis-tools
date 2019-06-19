@@ -8,7 +8,7 @@ from qrcode import QRCode
 from urllib.parse import urlencode, quote as urlquote
 
 from aegis.icons import IconGenerator
-from aegis.vault import decrypt_vault, generate_vault, generate_entry
+from aegis.vault import decrypt_vault, VaultGenerator
 
 def _write_output(output, data):
     if output != "-":
@@ -24,7 +24,8 @@ def _do_icons(args):
             f.write(icon.get_xml())
 
 def _do_vault(args):
-    vault = generate_vault(args.entries)
+    gen = VaultGenerator(no_icons=args.no_icons)
+    vault = gen.generate(entry_count=args.entries)
     _write_output(args.output, json.dumps(vault, indent=4))
 
 def _do_decrypt(args):
@@ -38,7 +39,7 @@ def _do_decrypt(args):
     _write_output(args.output, json.dumps(db, indent=4))
 
 def _do_qr(args):
-    entry = generate_entry()
+    entry = VaultGenerator(no_icons=True).generate_entry()
 
     params = {
         "secret": entry["info"]["secret"],
@@ -64,6 +65,7 @@ def main():
     vault_parser = subparsers.add_parser("gen-vault", help="Generate a random vault for use in the Aegis app")
     vault_parser.add_argument("--output", dest="output", default="-", help="vault output file ('-' for stdout)")
     vault_parser.add_argument("--entries", dest="entries", default=20, type=int, help="the amount of entries to generate")
+    vault_parser.add_argument("--no-icons", dest="no_icons", action="store_true", help="do not generate entry icons")
     vault_parser.set_defaults(func=_do_vault)
 
     qr_parser = subparsers.add_parser("gen-qr", help="Generate a random QR code")

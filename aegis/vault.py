@@ -85,47 +85,46 @@ _names = [
     "Evelyn"
 ]
 
-def generate_entry(icon_gen=None):
-    # generate a random icon and render it to JPEG
-    if icon_gen is None:
-        icon_gen = IconGenerator()
+class VaultGenerator:
+    def __init__(self, no_icons=False):
+        self._no_icons = no_icons
+        self._icon_gen = IconGenerator()
 
-    icon = icon_gen.generate_random()
-    icon_s = b64encode(icon.render_png()).decode("utf-8")
+    def generate(self, entry_count=20):
+        entries = []
+        for i in range(entry_count):
+            entries.append(self.generate_entry())
 
-    # generate a random 128-bit secret
-    secret = b32encode(secrets.token_bytes(16)).decode("utf-8").rstrip("=")
-    entry = {
-        "type": "totp",
-        "uuid": str(uuid.uuid4()),
-        "name": secrets.choice(_names),
-        "issuer": icon.title,
-        "icon": icon_s,
-        "info": {
-            "secret": secret,
-            "algo": "SHA1",
-            "digits": 6,
-            "period": 30
-        }
-    }
-
-    return entry
-
-def generate_vault(entry_count=20):
-    icon_gen = IconGenerator()
-
-    entries = []
-    for i in range(entry_count):
-        entries.append(generate_entry(icon_gen=icon_gen))
-
-    return {
-        "version": 1,
-        "header": {
-            "slots": None,
-            "params": None
-        },
-        "db": {
+        return {
             "version": 1,
-            "entries": entries
+            "header": {
+                "slots": None,
+                "params": None
+            },
+            "db": {
+                "version": 1,
+                "entries": entries
+            }
         }
-    }
+
+    def generate_entry(self):
+        # generate a random icon and render it to PNG
+        icon = self._icon_gen.generate_random()
+
+        # generate a random 128-bit secret
+        secret = b32encode(secrets.token_bytes(16)).decode("utf-8").rstrip("=")
+        entry = {
+            "type": "totp",
+            "uuid": str(uuid.uuid4()),
+            "name": secrets.choice(_names),
+            "issuer": icon.title,
+            "icon": None if self._no_icons else b64encode(icon.render_png()).decode("utf-8"),
+            "info": {
+                "secret": secret,
+                "algo": "SHA1",
+                "digits": 6,
+                "period": 30
+            }
+        }
+
+        return entry
