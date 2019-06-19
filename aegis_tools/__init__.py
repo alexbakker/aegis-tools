@@ -58,20 +58,20 @@ def main():
     parser = argparse.ArgumentParser(description="A collection of developer tools for Aegis Authenticator", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     subparsers = parser.add_subparsers()
 
-    icon_parser = subparsers.add_parser("gen-icons", help="Generate icons for Aegis based on simple-icons")
+    icon_parser = subparsers.add_parser("gen-icons", help="Generate icons for Aegis based on simple-icons", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     icon_parser.add_argument("--output", dest="output", required=True, help="icon output folder")
     icon_parser.set_defaults(func=_do_icons)
 
-    vault_parser = subparsers.add_parser("gen-vault", help="Generate a random vault for use in the Aegis app")
+    vault_parser = subparsers.add_parser("gen-vault", help="Generate a random vault for use in the Aegis app", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     vault_parser.add_argument("--output", dest="output", default="-", help="vault output file ('-' for stdout)")
     vault_parser.add_argument("--entries", dest="entries", default=20, type=int, help="the amount of entries to generate")
     vault_parser.add_argument("--no-icons", dest="no_icons", action="store_true", help="do not generate entry icons")
     vault_parser.set_defaults(func=_do_vault)
 
-    qr_parser = subparsers.add_parser("gen-qr", help="Generate a random QR code")
+    qr_parser = subparsers.add_parser("gen-qr", help="Generate a random QR code", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     qr_parser.set_defaults(func=_do_qr)
 
-    decrypt_parser = subparsers.add_parser("decrypt-vault", help="Decrypt an Aegis vault")
+    decrypt_parser = subparsers.add_parser("decrypt-vault", help="Decrypt an Aegis vault", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     decrypt_parser.add_argument("--input", dest="input", required=True, help="encrypted Aegis vault file")
     decrypt_parser.add_argument("--output", dest="output", default="-", help="output file ('-' for stdout)")
     decrypt_parser.set_defaults(func=_do_decrypt)
