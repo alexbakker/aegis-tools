@@ -12,9 +12,11 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "cairosvg",
         "cryptography",
+        "lxml",
         "qrcode",
+        "reportlab",
+        "svglib>=0.9.0",
         "xmltodict"
     ],
     entry_points={

@@ -6,8 +6,11 @@ import re
 import secrets
 from collections import OrderedDict
 
-import cairosvg
 import xmltodict
+from lxml import etree
+from reportlab.graphics import renderPM
+from reportlab.graphics.shapes import Drawing
+from svglib.svglib import svg2rlg, SvgRenderer
 
 # https://github.com/simple-icons/simple-icons/blob/f69ea6f28a3c864c79421e962103ebebbda7bb70/scripts/utils.js#L6-L15
 def icon_title_to_name(title):
@@ -38,10 +41,20 @@ class Icon:
     def get_xml(self):
         return xmltodict.unparse(self.svg, pretty=True)
 
-    def render_png(self):
-        res = io.BytesIO()
-        cairosvg.svg2png(bytestring=self.get_xml(), write_to=res, output_width=800, output_height=800)
-        return res.getvalue()
+    def render_png(self, width=800, height=800):
+        # svglib expects an lxml structure internally
+        parser = etree.XMLParser(remove_comments=True, recover=True)
+        svg = etree.fromstring(self.get_xml().encode("utf-8"), parser=parser)
+
+        # render the SVG to a PNG
+        renderer = SvgRenderer(None)
+        drawing = renderer.render(svg)
+        scale_x = width / drawing.width
+        scale_y = height / drawing.height
+        drawing.width = width
+        drawing.height = height
+        drawing.scale(scale_x, scale_y)
+        return renderPM.drawToString(drawing, fmt="PNG")
 
 class IconGenerator:
     def __init__(self):
