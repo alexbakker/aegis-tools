@@ -48,7 +48,7 @@ def _do_qr(args):
         "digits": entry["info"]["digits"],
         "period": entry["info"]["period"]
     }
-    uri = "otpauth://totp/{}:{}.com?".format(urlquote(entry["name"]), urlquote(entry["issuer"]))
+    uri = "otpauth://totp/{}:{}?".format(urlquote(entry["name"]), urlquote(entry["issuer"]))
 
     qr = QRCode()
     qr.add_data(uri + urlencode(params))
