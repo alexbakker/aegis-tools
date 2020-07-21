@@ -38,7 +38,7 @@ def _do_icon_pack(args):
     ]
 
     pack = {
-        "uuid": "bb32d0dc-833b-4e92-a764-b80e38fa442d",
+        "uuid": "6a371ea0-1178-4677-ae93-cda7a7a5b378",
         "name": "Alex's Icon Pack",
         "version": 1,
         "icons": []
