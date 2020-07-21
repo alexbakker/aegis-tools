@@ -97,7 +97,7 @@ def main():
     icon_parser.set_defaults(func=_do_icons)
 
     icon_pack_parser = subparsers.add_parser("gen-icon-pack", help="Generate an icon pack for Aegis based on simple-icons", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    icon_pack_parser.add_argument("--output", dest="iconpack.zip", required=True, help="icon pack output filename")
+    icon_pack_parser.add_argument("--output", dest="output", required=True, help="icon pack output filename")
     icon_pack_parser.set_defaults(func=_do_icon_pack)
 
     vault_parser = subparsers.add_parser("gen-vault", help="Generate a random vault for use in the Aegis app", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
