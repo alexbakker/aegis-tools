@@ -48,7 +48,7 @@ def _do_icon_pack(args):
         for icon in IconGenerator().generate_all():
             basename = os.path.basename(icon.filename)
             filename_zip = os.path.join("SVG", basename)
-            zipf.write(icon.filename, filename_zip)
+            zipf.writestr(filename_zip, icon.get_xml())
             pack["icons"].append({
                 "filename": filename_zip,
                 "category": secrets.choice(categories),
