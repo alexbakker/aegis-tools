@@ -90,4 +90,7 @@ class IconGenerator:
 
     def generate_all(self):
         for icon in self._icons:
-            yield self.generate(icon)
+            try:
+                yield self.generate(icon)
+            except IOError as e:
+                print(e)
