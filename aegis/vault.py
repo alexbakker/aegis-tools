@@ -1,6 +1,5 @@
 import base64
 import json
-import os
 import secrets
 import sys
 import uuid
@@ -12,6 +11,9 @@ from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.backends import default_backend
 import cryptography
 backend = default_backend()
+
+class VaultError(Exception):
+    pass
 
 def decrypt_vault(data, password):
     # extract all password slots from the header
@@ -46,7 +48,7 @@ def decrypt_vault(data, password):
             pass
 
     if master_key is None:
-        die("error: unable to decrypt the master key with the given password")
+        raise VaultError("unable to decrypt the master key with the given password")
 
     # decode the base64 vault contents
     content = base64.b64decode(data["db"])
