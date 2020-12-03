@@ -19,6 +19,20 @@ def _write_output(output, data):
     else:
         print(data)
 
+def _gen_uri() -> str:
+    entry = VaultGenerator(no_icons=True).generate_entry()
+
+    params = {
+        "secret": entry["info"]["secret"],
+        "issuer": entry["issuer"],
+        "algorithm": entry["info"]["algo"],
+        "digits": entry["info"]["digits"],
+        "period": entry["info"]["period"]
+    }
+
+    uri = "otpauth://totp/{}:{}?".format(urlquote(entry["issuer"]), urlquote(entry["name"]))
+    return uri + urlencode(params)
+
 def _do_icons(args):
     gen = IconGenerator()
     for icon in gen.generate_all():
@@ -73,20 +87,15 @@ def _do_decrypt(args):
     _write_output(args.output, json.dumps(db, indent=4))
 
 def _do_qr(args):
-    entry = VaultGenerator(no_icons=True).generate_entry()
-
-    params = {
-        "secret": entry["info"]["secret"],
-        "issuer": entry["issuer"],
-        "algorithm": entry["info"]["algo"],
-        "digits": entry["info"]["digits"],
-        "period": entry["info"]["period"]
-    }
-    uri = "otpauth://totp/{}:{}?".format(urlquote(entry["issuer"]), urlquote(entry["name"]))
+    uri = _gen_uri()
 
     qr = QRCode()
-    qr.add_data(uri + urlencode(params))
+    qr.add_data(uri)
     qr.print_ascii(invert=True)
+
+def _do_uri(args):
+    uri = _gen_uri()
+    print(uri)
 
 def main():
     parser = argparse.ArgumentParser(description="A collection of developer tools for Aegis Authenticator", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -108,6 +117,9 @@ def main():
 
     qr_parser = subparsers.add_parser("gen-qr", help="Generate a random QR code", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     qr_parser.set_defaults(func=_do_qr)
+
+    uri_parser = subparsers.add_parser("gen-uri", help="Generate a random URI", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    uri_parser.set_defaults(func=_do_uri)
 
     decrypt_parser = subparsers.add_parser("decrypt-vault", help="Decrypt an Aegis vault", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     decrypt_parser.add_argument("--input", dest="input", required=True, help="encrypted Aegis vault file")
