@@ -45,7 +45,6 @@ def _do_icon_pack(args):
         "Security",
         "Services",
         "Social",
-        "Memes",
         "Ecommerce",
         "Financial",
         None
