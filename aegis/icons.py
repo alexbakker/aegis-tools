@@ -63,7 +63,7 @@ class IconGenerator:
         with io.open(os.path.join(self._icon_dir, "_data", "simple-icons.json"), "r") as f:
             self._icons = json.load(f)["icons"]
 
-    def generate(self, icon):
+    def generate(self, icon, square=False):
         name = icon_title_to_name(icon["title"])
         name = re.sub(r"[^a-zA-Z0-9 -]", "", self._remove_accents(name))
         filename = name + ".svg"
@@ -74,12 +74,20 @@ class IconGenerator:
         svg = OrderedDict()
         for key, val in xml["svg"].items():
             if key == "path":
-                svg["circle"] = {
-                    "@cx": 12,
-                    "@cy": 12,
-                    "@r": 12,
-                    "@fill": "#" + icon["hex"]
-                }
+                if not square:
+                    svg["circle"] = {
+                        "@cx": 12,
+                        "@cy": 12,
+                        "@r": 12,
+                        "@fill": "#" + icon["hex"]
+                    }
+                else:
+                    svg["rect"] = {
+                        "@width": 24,
+                        "@height": 24,
+                        "@rx": 2,
+                        "@fill": "#" + icon["hex"]
+                    }
                 val["@transform"] = "translate(4.8, 4.8) scale(0.6)"
                 val["@fill"] = "white"
             svg[key] = val
@@ -90,10 +98,10 @@ class IconGenerator:
     def generate_random(self):
         return self.generate(secrets.choice(self._icons))
 
-    def generate_all(self):
+    def generate_all(self, square=False):
         for icon in self._icons:
             try:
-                yield self.generate(icon)
+                yield self.generate(icon, square)
             except IOError as e:
                 print(e)
 

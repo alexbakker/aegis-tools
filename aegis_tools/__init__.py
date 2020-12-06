@@ -59,7 +59,7 @@ def _do_icon_pack(args):
 
     with zipfile.ZipFile(args.output, "w", zipfile.ZIP_DEFLATED) as zipf:
         count = 0
-        for icon in IconGenerator().generate_all():
+        for icon in IconGenerator().generate_all(square=args.square):
             basename = os.path.basename(icon.filename)
             filename_zip = os.path.join("SVG", basename)
             zipf.writestr(filename_zip, icon.get_xml())
@@ -109,6 +109,7 @@ def main():
 
     icon_pack_parser = subparsers.add_parser("gen-icon-pack", help="Generate an icon pack for Aegis based on simple-icons", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     icon_pack_parser.add_argument("--output", dest="output", required=True, help="icon pack output filename")
+    icon_pack_parser.add_argument("--square", dest="square", action="store_true", help="output square icons (instead of circular)")
     icon_pack_parser.set_defaults(func=_do_icon_pack)
 
     vault_parser = subparsers.add_parser("gen-vault", help="Generate a random vault for use in the Aegis app", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
