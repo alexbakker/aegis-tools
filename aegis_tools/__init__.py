@@ -58,6 +58,7 @@ def _do_icon_pack(args):
     }
 
     with zipfile.ZipFile(args.output, "w", zipfile.ZIP_DEFLATED) as zipf:
+        count = 0
         for icon in IconGenerator().generate_all():
             basename = os.path.basename(icon.filename)
             filename_zip = os.path.join("SVG", basename)
@@ -67,8 +68,10 @@ def _do_icon_pack(args):
                 "category": secrets.choice(categories),
                 "issuer": [os.path.splitext(basename)[0]]
                 })
+            count += 1
         pack["icons"].sort(key=lambda icon: icon["filename"])
         zipf.writestr("pack.json", json.dumps(pack, indent=4).encode("utf-8"))
+        print(f"generated pack with {count} icons")
 
 def _do_vault(args):
     gen = VaultGenerator(no_icons=args.no_icons)

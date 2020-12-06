@@ -4,6 +4,7 @@ import os
 import pkg_resources
 import re
 import secrets
+import unicodedata
 from collections import OrderedDict
 
 import xmltodict
@@ -63,10 +64,11 @@ class IconGenerator:
             self._icons = json.load(f)["icons"]
 
     def generate(self, icon):
-        title = icon["title"]
-        name = icon_title_to_name(title) + ".svg"
-        filename = os.path.join(self._icon_dir, "icons", name)
-        with io.open(filename, "r") as f:
+        name = icon_title_to_name(icon["title"])
+        name = re.sub(r"[^a-zA-Z0-9 -]", "", self._remove_accents(name))
+        filename = name + ".svg"
+        full_filename = os.path.join(self._icon_dir, "icons", filename)
+        with io.open(full_filename, "r") as f:
             xml = xmltodict.parse(f.read())
 
         svg = OrderedDict()
@@ -83,7 +85,7 @@ class IconGenerator:
             svg[key] = val
 
         xml["svg"] = svg
-        return Icon(title, name, xml)
+        return Icon(name, filename, xml)
 
     def generate_random(self):
         return self.generate(secrets.choice(self._icons))
@@ -94,3 +96,8 @@ class IconGenerator:
                 yield self.generate(icon)
             except IOError as e:
                 print(e)
+
+    @staticmethod
+    def _remove_accents(s):
+        norm = unicodedata.normalize("NFKD", s)
+        return u"".join([c for c in norm if not unicodedata.combining(c)])
