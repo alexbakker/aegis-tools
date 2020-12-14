@@ -1,12 +1,11 @@
 import base64
 import json
 import secrets
-import sys
 import uuid
 from aegis.icons import IconGenerator
 from base64 import b32encode, b64encode
 
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.backends import default_backend
 import cryptography
@@ -15,7 +14,15 @@ backend = default_backend()
 class VaultError(Exception):
     pass
 
-def decrypt_vault(data, password):
+def _decrypt(ct, key, nonce, safe=True):
+    cipher = Cipher(algorithms.AES(key), modes.GCM(nonce), backend)
+    decryptor = cipher.decryptor()
+    pt = decryptor.update(ct[:len(ct) - 16])
+    if safe:
+        pt += decryptor.finalize_with_tag(ct[len(ct) - 16:])
+    return pt
+
+def decrypt_vault(data, password, safe=True):
     # extract all password slots from the header
     header = data["header"]
     slots = [slot for slot in header["slots"] if slot["type"] == 1]
@@ -35,15 +42,10 @@ def decrypt_vault(data, password):
         key = kdf.derive(password.encode("utf-8"))
 
         # try to use the derived key to decrypt the master key
-        cipher = AESGCM(key)
         params = slot["key_params"]
         try:
-            master_key = cipher.decrypt(
-                nonce=bytes.fromhex(params["nonce"]),
-                data=bytes.fromhex(slot["key"]) + bytes.fromhex(params["tag"]),
-                associated_data=None
-            )
-            break
+            ct = bytes.fromhex(slot["key"]) + bytes.fromhex(params["tag"])
+            master_key = _decrypt(ct, key, bytes.fromhex(params["nonce"]), safe=safe)
         except cryptography.exceptions.InvalidTag:
             pass
 
@@ -55,14 +57,8 @@ def decrypt_vault(data, password):
 
     # decrypt the vault contents using the master key
     params = header["params"]
-    cipher = AESGCM(master_key)
-    db = cipher.decrypt(
-        nonce=bytes.fromhex(params["nonce"]),
-        data=content + bytes.fromhex(params["tag"]),
-        associated_data=None
-    )
-
-    return json.loads(db.decode("utf-8"))
+    db = _decrypt(content + bytes.fromhex(params["tag"]), master_key, bytes.fromhex(params["nonce"]), safe=safe)
+    return db.decode("utf-8", errors="strict" if safe else "replace")
 
 _names = [
     "Liam",

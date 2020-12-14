@@ -10,7 +10,7 @@ from qrcode import QRCode
 from urllib.parse import urlencode, quote as urlquote
 
 from aegis.icons import IconGenerator
-from aegis.vault import decrypt_vault, VaultGenerator
+from aegis.vault import decrypt_vault, VaultError, VaultGenerator
 
 def _write_output(output, data):
     if output != "-":
@@ -85,8 +85,8 @@ def _do_decrypt(args):
     # ask the user for a password
     password = getpass.getpass()
 
-    db = decrypt_vault(data, password)
-    _write_output(args.output, json.dumps(db, indent=4))
+    db = decrypt_vault(data, password, safe=not args.unsafe)
+    _write_output(args.output, db)
 
 def _do_qr(args):
     uri = _gen_uri()
@@ -127,6 +127,7 @@ def main():
     decrypt_parser = subparsers.add_parser("decrypt-vault", help="Decrypt an Aegis vault", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     decrypt_parser.add_argument("--input", dest="input", required=True, help="encrypted Aegis vault file")
     decrypt_parser.add_argument("--output", dest="output", default="-", help="output file ('-' for stdout)")
+    decrypt_parser.add_argument("--unsafe", dest="unsafe", action="store_true", help="skip authentication tag verification")
     decrypt_parser.set_defaults(func=_do_decrypt)
 
     args = parser.parse_args()
