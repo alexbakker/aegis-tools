@@ -58,15 +58,17 @@ class Icon:
         return renderPM.drawToString(drawing, fmt="PNG")
 
 class IconGenerator:
-    def __init__(self):
-        self._icon_dir = os.path.join(pkg_resources.resource_filename(__name__, "simple-icons"))
+    def __init__(self, path=None):
+        if path is None:
+            path = pkg_resources.resource_filename(__name__, "simple-icons")
+        self._icon_dir = os.path.join(path)
         with io.open(os.path.join(self._icon_dir, "_data", "simple-icons.json"), "r") as f:
             self._icons = json.load(f)["icons"]
 
     def generate(self, icon, square=False):
         name = icon_title_to_name(icon["title"])
         name = re.sub(r"[^a-zA-Z0-9 -]", "", self._remove_accents(name))
-        filename = name + ".svg"
+        filename = (icon["slug"] if "slug" in icon else name) + ".svg"
         full_filename = os.path.join(self._icon_dir, "icons", filename)
         with io.open(full_filename, "r") as f:
             xml = xmltodict.parse(f.read())

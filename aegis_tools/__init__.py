@@ -3,7 +3,6 @@ import getpass
 import io
 import json
 import os
-import secrets
 import zipfile
 from collections import namedtuple
 from qrcode import QRCode
@@ -40,32 +39,22 @@ def _do_icons(args):
             f.write(icon.get_xml())
 
 def _do_icon_pack(args):
-    categories = [
-        "Gaming",
-        "Security",
-        "Services",
-        "Social",
-        "Ecommerce",
-        "Financial",
-        None
-    ]
-
     pack = {
         "uuid": "6a371ea0-1178-4677-ae93-cda7a7a5b378",
-        "name": "Alex's Icon Pack",
-        "version": 1,
+        "name": "Alex' Icon Pack",
+        "version": args.version,
         "icons": []
     }
 
     with zipfile.ZipFile(args.output, "w", zipfile.ZIP_DEFLATED) as zipf:
         count = 0
-        for icon in IconGenerator().generate_all(square=args.square):
+        for icon in IconGenerator(path=args.simple_icons).generate_all(square=args.square):
             basename = os.path.basename(icon.filename)
             filename_zip = os.path.join("SVG", basename)
             zipf.writestr(filename_zip, icon.get_xml())
             pack["icons"].append({
                 "filename": filename_zip,
-                "category": secrets.choice(categories),
+                "category": None,
                 "issuer": [os.path.splitext(basename)[0]]
                 })
             count += 1
@@ -108,6 +97,8 @@ def main():
     icon_parser.set_defaults(func=_do_icons)
 
     icon_pack_parser = subparsers.add_parser("gen-icon-pack", help="Generate an icon pack for Aegis based on simple-icons", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    icon_pack_parser.add_argument("--simple-icons", dest="simple_icons", default=None, help="path of the simple-icons repository checkout")
+    icon_pack_parser.add_argument("--version", dest="version", required=True, type=int, help="the version number")
     icon_pack_parser.add_argument("--output", dest="output", required=True, help="icon pack output filename")
     icon_pack_parser.add_argument("--square", dest="square", action="store_true", help="output square icons (instead of circular)")
     icon_pack_parser.set_defaults(func=_do_icon_pack)
