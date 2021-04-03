@@ -33,7 +33,7 @@ def _gen_uri() -> str:
     return uri + urlencode(params)
 
 def _do_icons(args):
-    gen = IconGenerator()
+    gen = IconGenerator(path=args.simple_icons)
     for icon in gen.generate_all():
         with open(os.path.join(args.output, icon.filename), "w") as f:
             f.write(icon.get_xml())
@@ -41,7 +41,7 @@ def _do_icons(args):
 def _do_icon_pack(args):
     pack = {
         "uuid": "6a371ea0-1178-4677-ae93-cda7a7a5b378",
-        "name": "Alex' Icon Pack",
+        "name": "Aegis Simple Icons",
         "version": args.version,
         "icons": []
     }
@@ -93,6 +93,7 @@ def main():
     subparsers = parser.add_subparsers()
 
     icon_parser = subparsers.add_parser("gen-icons", help="Generate icons for Aegis based on simple-icons", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    icon_parser.add_argument("--simple-icons", dest="simple_icons", required=True, help="path of the simple-icons repository checkout")
     icon_parser.add_argument("--output", dest="output", required=True, help="icon output folder")
     icon_parser.set_defaults(func=_do_icons)
 
