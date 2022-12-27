@@ -12,7 +12,7 @@ from reportlab.graphics import renderPM
 from reportlab.graphics.shapes import Drawing
 from svglib.svglib import svg2rlg, SvgRenderer
 
-# source: https://github.com/simple-icons/simple-icons/blob/master/scripts/utils.js#L10-L67
+# source: https://github.com/simple-icons/simple-icons/blob/e5b3b29f1b12974c59db524a272f6cd929545991/scripts/utils.js
 def icon_title_to_name(title):
     title = title.lower()
 
