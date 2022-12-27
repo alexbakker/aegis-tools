@@ -53,10 +53,11 @@ def _do_icon_pack(args):
             filename_zip = os.path.join("SVG", basename)
             zipf.writestr(filename_zip, icon.get_xml())
             pack["icons"].append({
+                "name": icon.title,
                 "filename": filename_zip,
                 "category": None,
-                "issuer": [os.path.splitext(basename)[0]]
-                })
+                "issuer": [icon.title]
+            })
             count += 1
         pack["icons"].sort(key=lambda icon: icon["filename"])
         zipf.writestr("pack.json", json.dumps(pack, indent=4).encode("utf-8"))

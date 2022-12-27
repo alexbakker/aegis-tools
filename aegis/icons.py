@@ -12,25 +12,28 @@ from reportlab.graphics import renderPM
 from reportlab.graphics.shapes import Drawing
 from svglib.svglib import svg2rlg, SvgRenderer
 
-# https://github.com/simple-icons/simple-icons/blob/f69ea6f28a3c864c79421e962103ebebbda7bb70/scripts/utils.js#L6-L15
+# source: https://github.com/simple-icons/simple-icons/blob/master/scripts/utils.js#L10-L67
 def icon_title_to_name(title):
     title = title.lower()
 
     expr = [
-        (r"\+", "plus", 0),
-        (r"^\.", "dot-", 1),
-        (r"\.$", "-dot", 1),
-        (r"\.", "-dot-", 0),
-        (r"^&", "and-", 1),
-        (r"&$", "-and", 1),
-        (r"&", "-and-", 0),
-        (r"[ !’]", "", 0)
+        (r'\+', 'plus'),
+        (r'\.', 'dot'),
+        (r'&', 'and'),
+        ('đ', 'd'),
+        ('ħ', 'h'),
+        ('ı', 'i'),
+        ('ĸ', 'k'),
+        ('ŀ', 'l'),
+        ('ł', 'l'),
+        ('ß', 'ss'),
+        ('ŧ'  't')
     ]
 
     for e in expr:
-        title = re.sub(e[0], e[1], title, count=e[2])
+        title = re.sub(e[0], e[1], title)
 
-    return title
+    return title.replace(" ", "")
 
 class Icon:
     def __init__(self, title, filename, svg):
@@ -63,8 +66,9 @@ class IconGenerator:
             self._icons = json.load(f)["icons"]
 
     def generate(self, icon, square=False):
-        name = icon_title_to_name(icon["title"])
-        name = re.sub(r"[^a-zA-Z0-9 -]", "", self._remove_accents(name))
+        title = icon["title"]
+        name = icon_title_to_name(title)
+        name = re.sub(r"[^a-zA-Z0-9  ]", "", self._remove_accents(name))
         filename = (icon["slug"] if "slug" in icon else name) + ".svg"
         full_filename = os.path.join(self._icon_dir, "icons", filename)
         with io.open(full_filename, "r") as f:
@@ -92,17 +96,14 @@ class IconGenerator:
             svg[key] = val
 
         xml["svg"] = svg
-        return Icon(name, filename, xml)
+        return Icon(title, filename, xml)
 
     def generate_random(self):
         return self.generate(secrets.choice(self._icons))
 
     def generate_all(self, square=False):
         for icon in self._icons:
-            try:
-                yield self.generate(icon, square)
-            except IOError as e:
-                print(e)
+            yield self.generate(icon, square)
 
     @staticmethod
     def _remove_accents(s):
