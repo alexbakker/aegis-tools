@@ -19,7 +19,7 @@ def _write_output(output, data):
         print(data)
 
 def _gen_uri() -> str:
-    entry = VaultGenerator(no_icons=True).generate_entry()
+    entry = VaultGenerator().generate_entry()
 
     params = {
         "secret": entry["info"]["secret"],
@@ -64,7 +64,7 @@ def _do_icon_pack(args):
         print(f"generated pack with {count} icons")
 
 def _do_vault(args):
-    gen = VaultGenerator(no_icons=args.no_icons)
+    gen = VaultGenerator(simple_icons=args.simple_icons)
     vault = gen.generate(entry_count=args.entries)
     _write_output(args.output, json.dumps(vault, indent=4))
 
@@ -108,7 +108,7 @@ def main():
     vault_parser = subparsers.add_parser("gen-vault", help="Generate a random vault for use in the Aegis app", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     vault_parser.add_argument("--output", dest="output", default="-", help="vault output file ('-' for stdout)")
     vault_parser.add_argument("--entries", dest="entries", default=20, type=int, help="the amount of entries to generate")
-    vault_parser.add_argument("--no-icons", dest="no_icons", action="store_true", help="do not generate entry icons")
+    vault_parser.add_argument("--simple-icons", dest="simple_icons", help="path of the simple-icons repository checkout")
     vault_parser.set_defaults(func=_do_vault)
 
     qr_parser = subparsers.add_parser("gen-qr", help="Generate a random QR code", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
