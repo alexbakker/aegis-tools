@@ -4,6 +4,7 @@ import io
 import json
 import os
 import zipfile
+import secrets
 from collections import namedtuple
 from qrcode import QRCode
 from urllib.parse import urlencode, quote as urlquote

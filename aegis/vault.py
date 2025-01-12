@@ -1,5 +1,4 @@
 import base64
-import json
 import secrets
 import uuid
 from aegis.icons import IconGenerator
@@ -107,5 +106,7 @@ class VaultGenerator:
                 "period": 30
             }
         }
+        if icon is not None:
+            entry["icon_mime"] = "image/png"
 
         return entry

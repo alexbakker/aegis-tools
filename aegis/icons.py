@@ -2,7 +2,6 @@ import io
 import json
 import os
 import re
-import secrets
 import unicodedata
 from collections import OrderedDict
 
